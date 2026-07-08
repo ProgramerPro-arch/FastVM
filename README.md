@@ -1,88 +1,110 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FastVM - Cloud Virtualization for Discord</title>
-    <style>
-        :root {
-            --bg-color: #0d1117;
-            --text-color: #c9d1d9;
-            --accent-color: #58a6ff;
-            --border-color: #30363d;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-        }
-        .container { max-width: 800px; margin: 0 auto; }
-        header { text-align: center; padding: 50px 0; border-bottom: 1px solid var(--border-color); }
-        h1 { color: #fff; font-size: 2.5rem; margin-bottom: 0.5rem; }
-        .tagline { font-size: 1.2rem; color: #8b949e; }
-        section { margin: 40px 0; }
-        h2 { border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-top: 30px; color: #fff; }
-        .features-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
-        .feature-card { background: #161b22; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); }
-        code { background: #161b22; padding: 2px 5px; border-radius: 4px; color: #ff7b72; font-family: monospace; }
-        pre { background: #161b22; padding: 15px; border-radius: 8px; overflow-x: auto; border: 1px solid var(--border-color); }
-        footer { text-align: center; font-size: 0.9rem; color: #8b949e; margin-top: 50px; }
-    </style>
-</head>
-<body>
+FastVM
+About The Project
+FastVM is an open-source cloud virtualization platform designed to bridge the gap between cloud computing and social communication. By leveraging the Discord Embedded App SDK, FastVM allows users to launch and control personal virtual machines (VMs) as a native Discord Activity.
 
-<div class="container">
-    <header>
-        <h1>FastVM</h1>
-        <p class="tagline">Your personal cloud desktop, integrated directly into Discord.</p>
-    </header>
+Our goal is to make personal cloud desktops accessible to everyone, eliminating the need for complex remote desktop software and dedicated client installations.
 
-    <section id="about">
-        <h2>About The Project</h2>
-        <p>FastVM is an open-source cloud virtualization platform designed to bridge the gap between cloud computing and social communication. By leveraging the Discord Embedded App SDK, FastVM allows users to launch and control personal virtual machines (VMs) as a native Discord Activity.</p>
-    </section>
+Key Features
+🔐 Discord Authentication: Seamless login using Discord OAuth.
 
-    <section id="features">
-        <h2>Key Features</h2>
-        <div class="features-grid">
-            <div class="feature-card">🔐 <b>Discord Auth</b>: Seamless login via OAuth.</div>
-            <div class="feature-card">🖥️ <b>Remote Desktop</b>: Low-latency VNC powered by noVNC.</div>
-            <div class="feature-card">⌨️ <b>Full Control</b>: Precise keyboard and mouse input mapping.</div>
-            <div class="feature-card">💾 <b>Persistence</b>: VMs that retain state across sessions.</div>
-        </div>
-    </section>
+🖥️ Interactive Remote Desktop: Low-latency VNC integration powered by noVNC.
 
-    <section id="tech-stack">
-        <h2>Technology Stack</h2>
-        <ul>
-            <li><b>Frontend</b>: Vite, React, noVNC</li>
-            <li><b>Integration</b>: Discord Embedded App SDK</li>
-            <li><b>Middleware</b>: Node.js, Websockify</li>
-            <li><b>Virtualization</b>: VMware ESXi (Current), Proxmox (Planned)</li>
-        </ul>
-    </section>
+⌨️ Full Control: Precise keyboard and mouse input mapping.
 
-    <section id="installation">
-        <h2>Installation</h2>
-        <pre><code>git clone https://github.com/yourusername/fastvm.git
+⚡ Real-time Streaming: Smooth screen capture and display.
+
+💾 Persistent Storage: Personal VMs that retain state across sessions.
+
+🏗️ Extensible: Designed to integrate with enterprise hypervisors.
+
+Architecture
+The following diagram illustrates how FastVM bridges the gap between the Discord client and your virtualized infrastructure.
+
+Fragment kodu
+graph LR
+    User[Discord Client] -->|WSS/Websockify| Proxy[FastVM Proxy/Bridge]
+    Proxy -->|VNC Protocol| Hypervisor[Hypervisor: VMware/Proxmox]
+    DiscordSDK -.->|Auth/Context| User
+Technology Stack
+Frontend: Vite, React, noVNC
+
+Discord Integration: Discord Embedded App SDK
+
+Middleware: Node.js, Websockify
+
+Virtualization: VMware ESXi (Current), Proxmox VE (Planned)
+
+How It Works
+Authentication: The app authenticates the user via Discord OAuth to ensure secure access.
+
+Bridging: The bridge.js middleware acts as a proxy, converting secure WebSockets from the Discord Activity into standard VNC traffic.
+
+Visualization: The noVNC client renders the remote framebuffer within the Discord interface.
+
+Installation
+Prerequisites
+Node.js v18+
+
+A running virtualization host (VMware/Proxmox)
+
+Discord Developer Portal application credentials
+
+Setup
+Bash
+# Clone the repository
+git clone https://github.com/ProgramerPro-arch/fastvm.git
 cd fastvm
+
+# Install dependencies
 npm install
+
+# Run the bridge
 node bridge.js
-npm run dev</code></pre>
-    </section>
 
-    <section id="license">
-        <h2>License</h2>
-        <p>This project is licensed under the <b>GNU Affero General Public License v3.0</b>.</p>
-    </section>
+# Run the frontend
+npm run dev
+Configuration
+Create a .env file in the root directory:
 
-    <footer>
-        <p>Built for the future of cloud computing on Discord.</p>
-    </footer>
-</div>
+And create an .env file and fill with that
+VITE_DISCORD_CLIENT_ID=your_client_id_here
+VNC_HOST=your_local_vnc_ip_machine
+VNC_PORT=your_port_default_is_5900
+Roadmap
+[x] Discord OAuth authentication
 
-</body>
-</html>
+[x] Basic VNC rendering via noVNC
+
+[x] Keyboard/Mouse input handling
+
+[ ] Automatic VM provisioning from templates (Planned)
+
+[ ] Audio streaming support (Planned)
+
+[ ] Proxmox VE hypervisor integration (Planned)
+
+Security
+FastVM operates on the principle of least privilege. We recommend:
+
+Running the bridge in a restricted network segment.
+
+Enforcing strong VNC passwords.
+
+Contributing
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are greatly appreciated.
+
+Fork the Project
+
+Create your Feature Branch (git checkout -b feature/AmazingFeature)
+
+Commit your Changes (git commit -m 'Add some AmazingFeature')
+
+Push to the Branch (git push origin feature/AmazingFeature)
+
+Open a Pull Request
+
+License
+This project is licensed under the GNU Affero General Public License v3.0. See the LICENSE file for details.
+
+Contact
+GitHub: ProgramerPro-arch/fastvm
