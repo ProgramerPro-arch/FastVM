@@ -10,5 +10,9 @@
   },
   "devDependencies": {
     "vite": "^5.0.8"
+  },
+  "dependencies": {
+    "@discord/embedded-app-sdk": "^1.9.0",
+    "@novnc/novnc": "^1.7.0"
   }
 }
