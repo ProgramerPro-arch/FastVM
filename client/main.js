@@ -65,9 +65,7 @@ function connectVNC() {
         console.log("Łączenie z:", wsUrl);
 
         window.rfb = new RFB(container, wsUrl, {
-            credentials: {
-                password: "123",
-            },
+            
             wsProtocols: ["binary", "base64"],
         });
 
@@ -79,9 +77,12 @@ function connectVNC() {
         window.rfb.addEventListener("credentialsrequired", () => {
             console.log("Serwer poprosił o hasło.");
 
-            window.rfb.sendCredentials({
-                password: "123",
-            });
+            const password = window.prompt("Hasło do Twojej maszyny VNC:");
+            if (password === null) {
+                window.rfb.disconnect();
+                return;
+            }
+            window.rfb.sendCredentials({ password });
         });
 
         // Połączono
