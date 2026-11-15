@@ -1,7 +1,7 @@
 import { WebSocketServer } from 'ws';
 import net from 'net';
 
-const wss = new WebSocketServer({ port: 6080 });
+const wss = new WebSocketServer({ port: 6080, host: '127.0.0.1', maxPayload: 1024 * 1024 });
 console.log('🚀 Mostek WebSocket (6080) -> VNC (5900) uruchomiony!');
 
 wss.on('connection', (ws) => {
