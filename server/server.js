@@ -18,18 +18,21 @@ app.use((req, res, next) => {
   res.setHeader("Content-Security-Policy", "frame-ancestors * https://*.discord.com https://discord.com");
   
   // Standardowe nagłówki CORS
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  // Same-origin API; do not allow arbitrary websites to read responses.
   res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   
   next();
 });
 
-app.use(express.json());
+app.use(express.json({ limit: "16kb" }));
 
 // Endpoint do wymiany kodu autoryzacji na token (OAuth2)
 app.post("/api/token", async (req, res) => {
   try {
+    if (typeof req.body?.code !== "string" || req.body.code.length < 1 || req.body.code.length > 2048) {
+      return res.status(400).json({ error: "Invalid authorization code" });
+    }
     const response = await fetch("https://discord.com/api/oauth2/token", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -43,7 +46,11 @@ app.post("/api/token", async (req, res) => {
     });
     
     const data = await response.json();
-    res.json(data);
+    if (!response.ok || typeof data.access_token !== "string") {
+      return res.status(401).json({ error: "Discord authentication failed" });
+    }
+    res.setHeader("Cache-Control", "no-store");
+    res.json({ access_token: data.access_token });
   } catch (error) {
     console.error("Token exchange error:", error);
     res.status(500).json({ error: "Failed to exchange token" });
@@ -51,12 +58,7 @@ app.post("/api/token", async (req, res) => {
 });
 
 // Endpoint do weryfikacji hasła (np. do ochrony VNC)
-app.post("/api/check-password", (req, res) => {
-  if (req.body.password === process.env.GATE_PASSWORD) {
-    return res.json({ success: true });
-  }
-  res.status(401).json({ success: false });
-});
+// Password checks are performed by the VNC protocol, not a public API endpoint.
 
 // Uruchomienie serwera na porcie 3001
 const PORT = 3001;
